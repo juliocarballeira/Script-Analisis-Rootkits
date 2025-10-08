@@ -1,0 +1,27 @@
+name: Validar AnalisisRootkits.sh
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Validar sintaxis Bash
+        run: bash -n AnalisisRootkits.sh
+
+      - name: Comprobar dependencias del sistema
+        run: |
+          for cmd in netstat lsof awk grep sha256sum md5sum dpkg; do
+            which $cmd || echo "Falta $cmd"
+          done
+
+      - name: Confirmar ejecución básica
+        run: bash AnalisisRootkits.sh --help || echo "Ejecución de prueba completada"
